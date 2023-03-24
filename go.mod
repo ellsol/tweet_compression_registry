@@ -1,0 +1,1 @@
+module tweet_compression_registry
