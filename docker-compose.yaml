@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  tcr:
+    image: leondroid/tcr:0.1.0
+    ports:
+      - "80:8080"

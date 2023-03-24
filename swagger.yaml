@@ -1,0 +1,105 @@
+basePath: /api/v1/
+consumes:
+- application/json
+- multipart/form-data
+definitions:
+  ErrorResponse:
+    properties:
+      code:
+        type: string
+        x-go-name: Code
+      details:
+        type: string
+        x-go-name: Details
+      invalidFields:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+        x-go-name: InvalidFields
+      kind:
+        enum:
+        - Unknown
+        - Unexpected
+        - Unauthorized
+        - Forbidden
+        - Validation
+        - BadRequest
+        - NotFound
+        - Conflict
+        type: string
+        x-go-name: Kind
+      message:
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: tweet_compression_registry/swagger
+  UploadTweetDTO:
+    properties:
+      payload:
+        type: string
+        x-go-name: Payload
+    type: object
+    x-go-package: tweet_compression_registry/app
+  UploadTweetResponseDTO:
+    properties:
+      checksum:
+        type: string
+        x-go-name: Checksum
+    type: object
+    x-go-package: tweet_compression_registry/app
+host: localhost:8080
+info:
+  description: Documentation of the Identity Provider service.
+  title: Identity Provider Service.
+paths:
+  /tweet:
+    post:
+      description: Uploads a tweet
+      operationId: uploadTweet
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/UploadTweetDTO'
+      responses:
+        "200":
+          description: UploadTweetResponseDTO
+          schema:
+            $ref: '#/definitions/UploadTweetResponseDTO'
+      tags:
+      - tweet
+produces:
+- application/json
+responses:
+  BadRequestResponse:
+    description: ""
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  ForbiddenResponse:
+    description: ""
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  InternalServerErrorResponse:
+    description: ""
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  NoContent:
+    description: ""
+  NotFoundResponse:
+    description: ""
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  UnauthorizedResponse:
+    description: ""
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+schemes:
+- http
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -5,12 +5,40 @@ to a compression
 
 ## Dependencies
 
+Prepare
+
 Install
 
-    * Make (if not present)
+    Goose
+    Make (if not present)
+    Jet
+    Swagger
+
+Run
+
+    make vet
+    make migrate
+    make jet
 
 ## Basics
 
 Run the program
 
     make run
+
+## Deployment
+
+Build docker container with (update version manually)
+
+    make docker
+
+
+## Create Docs
+
+    make serve-swagger
+
+## Migration
+
+#### Add New Migration
+
+    goose create NAME_OF_MIGRATION sql
