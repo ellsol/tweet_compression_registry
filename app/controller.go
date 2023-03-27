@@ -18,9 +18,15 @@ func NewController(service *ChecksumService) Controller {
 	}
 }
 
-func (c Controller) Routes() func(r chi.Router) {
+func (c Controller) InsertTweet() func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Post("/", c.UploadTweet)
+	}
+}
+
+func (c Controller) RetrieveTweet() func(r chi.Router) {
+	return func(r chi.Router) {
+		r.Get("/{checksum}", c.GetTweet)
 	}
 }
 
@@ -44,6 +50,23 @@ func (c Controller) UploadTweet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result, err := c.checksumService.NewTweet(r.Context(), data)
+
+	if err != nil {
+		RespondWithJSON(w, InternalError(err.Error()))
+		return
+	}
+
+	RespondWithJSON(w, OK(result))
+}
+
+func (c Controller) GetTweet(w http.ResponseWriter, r *http.Request) {
+	data := &GetTweetDTO{}
+	if err := data.ReadAndValidate(r); err != nil {
+		RespondWithJSON(w, BadRequest(err.Error()))
+		return
+	}
+
+	result, err := c.checksumService.GetTweet(r.Context(), data)
 
 	if err != nil {
 		RespondWithJSON(w, InternalError(err.Error()))
