@@ -60,7 +60,6 @@ post:
    		-H 'Content-Type: application/json' \
    		-d '{"payload":"my_login"}' | jq .
 
-
 migrate:
 	cd migrate; goose  postgres "postgres://$(postgres_user):$(postgres_pwd)@$(postgres_url)/postgres?sslmode=disable" up
 down:
