@@ -32,6 +32,21 @@ Build docker container with (update version manually)
 
     make docker
 
+## Deploy Database
+
+    make init_db
+
+## Reset Database
+
+    make nuke
+
+## Start Database (included in _make init_db_)
+
+    make db_up
+
+## Seed Tweets (with random payload, 20 by default)
+
+    make seed_tweets
 
 ## Create Docs
 
