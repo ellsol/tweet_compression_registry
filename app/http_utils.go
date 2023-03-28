@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 // Response is meant to be returned by a modified version
@@ -241,6 +242,17 @@ func RespondWithError(w http.ResponseWriter, code int, msg string, details strin
 
 func OKHealthCheck(w http.ResponseWriter, r *http.Request) *Response {
 	return OK("ok")
+}
+
+func GetIntArg(name string, arg string, defaultValue int) (int, error) {
+	if len(arg) == 0 {
+		return defaultValue, nil
+	}
+	num, err := strconv.Atoi(arg)
+	if err != nil {
+		return 0, fmt.Errorf("expected %s argument to be a number, got %q: %v", name, arg, err)
+	}
+	return num, nil
 }
 
 type StatusResponse struct {
