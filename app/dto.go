@@ -23,9 +23,21 @@ type UploadTweetResponseDTO struct {
 	Checksum string `json:"checksum"`
 }
 
+// swagger:model GetTweetResponseDTO
 type GetTweetResponseDTO struct {
 	Id            string `json:"id"`
 	Tweet_Content string `json:"tweet"`
+}
+
+type PaginationDTO struct {
+	page   int
+	limit  int
+	offset int
+	size   int
+}
+
+type PaginatedTweetsResponseDTO struct {
+	Tweets []GetTweetResponseDTO `json:"tweets"`
 }
 
 func (a *UploadTweetDTO) ReadAndValidate(r *http.Request) error {
@@ -42,7 +54,7 @@ func (a *GetTweetDTO) ReadAndValidate(r *http.Request) error {
 	checksum_val := chi.URLParam(r, "checksum")
 
 	if checksum_val == "" {
-		return fmt.Errorf("body is empty")
+		return fmt.Errorf("no checksum provided")
 	}
 
 	a.Checksum = checksum_val
