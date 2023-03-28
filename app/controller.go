@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 )
@@ -24,9 +25,15 @@ func (c Controller) InsertTweet() func(r chi.Router) {
 	}
 }
 
+func (c Controller) PaginateTweets() func(r chi.Router) {
+	return func(r chi.Router) {
+		r.Get("/", c.HandlePaginateTweets)
+	}
+}
+
 func (c Controller) RetrieveTweet() func(r chi.Router) {
 	return func(r chi.Router) {
-		r.Get("/{checksum}", c.GetTweet)
+		r.Get("/", c.GetTweet)
 	}
 }
 
@@ -43,6 +50,7 @@ type uploadTweet struct {
 //
 //	200: UploadTweetResponseDTO
 func (c Controller) UploadTweet(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("POST")
 	data := &UploadTweetDTO{}
 	if err := data.ReadAndValidate(r); err != nil {
 		RespondWithJSON(w, BadRequest(err.Error()))
@@ -55,6 +63,52 @@ func (c Controller) UploadTweet(w http.ResponseWriter, r *http.Request) {
 		RespondWithJSON(w, InternalError(err.Error()))
 		return
 	}
+
+	RespondWithJSON(w, OK(result))
+}
+
+func (c Controller) HandlePaginateTweets(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+
+	offset := query.Get("offset")
+	limit := query.Get("limit")
+	page := query.Get("page")
+	size := query.Get("size")
+
+	offsetValue, err := GetIntArg("offset", offset, 0)
+	if err != nil {
+		RespondWithError(w, 400, err.Error(), "")
+		return
+	}
+
+	limitValue, err := GetIntArg("limit", limit, 20)
+	if err != nil {
+		RespondWithError(w, 400, err.Error(), "")
+		return
+	}
+
+	pageValue, err := GetIntArg("page", page, 1)
+	if err != nil {
+		RespondWithError(w, 400, err.Error(), "")
+		return
+	}
+
+	sizeValue, err := GetIntArg("size", size, 20)
+	if err != nil {
+		RespondWithError(w, 400, err.Error(), "")
+		return
+	}
+
+	paginatioDTO := PaginationDTO{page: pageValue, limit: limitValue, offset: offsetValue, size: sizeValue}
+
+	result, err := c.checksumService.GetPaginatedTweets(r.Context(), &paginatioDTO)
+
+	if err != nil {
+		RespondWithJSON(w, InternalError(err.Error()))
+		return
+	}
+
+	fmt.Println()
 
 	RespondWithJSON(w, OK(result))
 }
