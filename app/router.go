@@ -44,10 +44,7 @@ func newRouter(api *Api) *chi.Mux {
 		w.Write([]byte("works"))
 	})
 
-	routes.Route("/tweet", func(r chi.Router) {
-		r.Get("/", api.App.Controller.HandlePaginateTweets)
-		r.Post("/", api.App.Controller.UploadTweet)
-	})
+	routes.Route("/tweet", api.App.Controller.Routes())
 
 	routes.Route("/tweet/bychecksum", api.App.Controller.RetrieveTweet())
 

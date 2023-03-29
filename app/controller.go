@@ -18,14 +18,9 @@ func NewController(service *ChecksumService) Controller {
 	}
 }
 
-func (c Controller) InsertTweet() func(r chi.Router) {
+func (c Controller) Routes() func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Post("/", c.UploadTweet)
-	}
-}
-
-func (c Controller) PaginateTweets() func(r chi.Router) {
-	return func(r chi.Router) {
 		r.Get("/", c.HandlePaginateTweets)
 	}
 }
