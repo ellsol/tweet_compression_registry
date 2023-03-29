@@ -108,8 +108,6 @@ func (c Controller) HandlePaginateTweets(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	fmt.Println()
-
 	RespondWithJSON(w, OK(result))
 }
 
