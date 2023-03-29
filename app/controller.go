@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 )
@@ -50,7 +49,6 @@ type uploadTweet struct {
 //
 //	200: UploadTweetResponseDTO
 func (c Controller) UploadTweet(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("POST")
 	data := &UploadTweetDTO{}
 	if err := data.ReadAndValidate(r); err != nil {
 		RespondWithJSON(w, BadRequest(err.Error()))
@@ -99,12 +97,12 @@ func (c Controller) HandlePaginateTweets(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	paginatioDTO := PaginationDTO{page: pageValue, limit: limitValue, offset: offsetValue, size: sizeValue}
+	paginatioDTO := PaginationDTO{Page: pageValue, Limit: limitValue, Offset: offsetValue, Size: sizeValue}
 
 	result, err := c.checksumService.GetPaginatedTweets(r.Context(), &paginatioDTO)
 
 	if err != nil {
-		RespondWithJSON(w, InternalError(err.Error()))
+		RespondWithJSON(w, NotFound(err.Error()))
 		return
 	}
 

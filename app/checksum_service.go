@@ -44,7 +44,7 @@ func (s *ChecksumService) GetTweet(context context.Context, data *GetTweetDTO) (
 func (s *ChecksumService) GetPaginatedTweets(context context.Context, data *PaginationDTO) (*PaginatedTweetsResponseDTO, error) {
 	stmt := Tweet.SELECT(Tweet.Original, Tweet.ID).FROM(Tweet)
 
-	stmt = stmt.OFFSET(int64(data.offset)).LIMIT(int64(data.limit))
+	stmt = stmt.OFFSET(int64(data.Offset)).LIMIT(int64(data.Limit))
 
 	dest := []model.Tweet{}
 	err := stmt.Query(s.db, &dest)
@@ -62,7 +62,8 @@ func (s *ChecksumService) GetPaginatedTweets(context context.Context, data *Pagi
 	}
 
 	return &PaginatedTweetsResponseDTO{
-		Tweets: tweets,
+		Tweets:     tweets,
+		Pagination: *data,
 	}, nil
 
 }

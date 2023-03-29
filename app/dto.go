@@ -3,9 +3,8 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-
 	"github.com/go-chi/chi/v5"
+	"net/http"
 )
 
 // swagger:model UploadTweetDTO
@@ -30,14 +29,15 @@ type GetTweetResponseDTO struct {
 }
 
 type PaginationDTO struct {
-	page   int
-	limit  int
-	offset int
-	size   int
+	Page   int `json:"page"`
+	Limit  int `json:"limit"`
+	Offset int `json:"offset"`
+	Size   int `json:"size"`
 }
 
 type PaginatedTweetsResponseDTO struct {
-	Tweets []GetTweetResponseDTO `json:"tweets"`
+	Tweets     []GetTweetResponseDTO `json:"tweets"`
+	Pagination PaginationDTO         `json:"pagination"`
 }
 
 func (a *UploadTweetDTO) ReadAndValidate(r *http.Request) error {
