@@ -45,7 +45,6 @@ func newRouter(api *Api) *chi.Mux {
 	})
 
 	routes.Route("/tweet", api.App.Controller.Routes())
-
 	routes.Route("/tweet/bychecksum", api.App.Controller.RetrieveTweet())
 
 	r.Mount(apiVersionURL, routes)

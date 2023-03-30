@@ -21,7 +21,7 @@ func NewController(service *ChecksumService) Controller {
 func (c Controller) Routes() func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Post("/", c.UploadTweet)
-		r.Get("/", c.HandlePaginateTweets)
+		r.With(PaginationMiddleware).Get("/", c.HandlePaginateTweets)
 	}
 }
 
@@ -61,40 +61,9 @@ func (c Controller) UploadTweet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c Controller) HandlePaginateTweets(w http.ResponseWriter, r *http.Request) {
-	query := r.URL.Query()
+	paginatioDTO := r.Context().Value(PaginationKey).(*PaginationDTO)
 
-	offset := query.Get("offset")
-	limit := query.Get("limit")
-	page := query.Get("page")
-	size := query.Get("size")
-
-	offsetValue, err := GetIntArg("offset", offset, 0)
-	if err != nil {
-		RespondWithError(w, 400, err.Error(), "")
-		return
-	}
-
-	limitValue, err := GetIntArg("limit", limit, 20)
-	if err != nil {
-		RespondWithError(w, 400, err.Error(), "")
-		return
-	}
-
-	pageValue, err := GetIntArg("page", page, 1)
-	if err != nil {
-		RespondWithError(w, 400, err.Error(), "")
-		return
-	}
-
-	sizeValue, err := GetIntArg("size", size, 20)
-	if err != nil {
-		RespondWithError(w, 400, err.Error(), "")
-		return
-	}
-
-	paginatioDTO := PaginationDTO{Page: pageValue, Limit: limitValue, Offset: offsetValue, Size: sizeValue}
-
-	result, err := c.checksumService.GetPaginatedTweets(r.Context(), &paginatioDTO)
+	result, err := c.checksumService.GetPaginatedTweets(r.Context(), paginatioDTO)
 
 	if err != nil {
 		RespondWithJSON(w, NotFound(err.Error()))
