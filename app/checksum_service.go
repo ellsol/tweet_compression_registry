@@ -20,7 +20,7 @@ func NewChecksumService(db *sql.DB) ChecksumService {
 }
 
 func (s *ChecksumService) GetTweet(context context.Context, data *GetTweetDTO) (*GetTweetResponseDTO, error) {
-	stmt := Tweet.SELECT(Tweet.Original).FROM(Tweet).WHERE(Tweet.Checksum.EQ(postgres.String(data.Checksum)))
+	stmt := Tweet.SELECT(Tweet.Original, Tweet.ID).FROM(Tweet).WHERE(Tweet.Checksum.EQ(postgres.String(data.Checksum)))
 	dest := []model.Tweet{}
 
 	err := stmt.Query(s.db, &dest)
@@ -30,7 +30,7 @@ func (s *ChecksumService) GetTweet(context context.Context, data *GetTweetDTO) (
 	}
 
 	if len(dest) == 0 {
-		return nil, fmt.Errorf("no tweet found")
+		return nil, fmt.Errorf("no tweet found with checksum: `%s`", data.Checksum)
 	}
 
 	foundTweet := dest[0]
@@ -42,9 +42,7 @@ func (s *ChecksumService) GetTweet(context context.Context, data *GetTweetDTO) (
 }
 
 func (s *ChecksumService) GetPaginatedTweets(context context.Context, data *PaginationDTO) (*PaginatedTweetsResponseDTO, error) {
-	stmt := Tweet.SELECT(Tweet.Original, Tweet.ID).FROM(Tweet)
-
-	stmt = stmt.OFFSET(int64(data.Offset)).LIMIT(int64(data.Limit))
+	stmt := Tweet.SELECT(Tweet.Original, Tweet.ID).FROM(Tweet).OFFSET(int64(data.Offset)).LIMIT(int64(data.Limit))
 
 	dest := []model.Tweet{}
 	err := stmt.Query(s.db, &dest)
@@ -56,7 +54,6 @@ func (s *ChecksumService) GetPaginatedTweets(context context.Context, data *Pagi
 	var tweets []GetTweetResponseDTO
 
 	for _, tweet_model := range dest {
-		fmt.Println(tweet_model)
 		tweet := GetTweetResponseDTO{Id: tweet_model.ID.String(), Tweet_Content: tweet_model.Original}
 		tweets = append(tweets, tweet)
 	}

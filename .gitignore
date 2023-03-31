@@ -1,5 +1,5 @@
 .idea
 .local.env
 tmp
-migrate/pgdata
+migrate
 *sql

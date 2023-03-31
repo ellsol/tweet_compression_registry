@@ -26,25 +26,25 @@ func PaginationMiddleware(next http.Handler) http.Handler {
 
 		offsetValue, err := GetIntArg("offset", offset, offsetDefault)
 		if err != nil {
-			RespondWithError(w, 403, err.Error(), fmt.Sprintf("can not parse offset=`%s` to an integer", offset))
+			RespondWithError(w, 400, err.Error(), fmt.Sprintf("can not parse offset=`%s` to an integer", offset))
 			return
 		}
 
 		limitValue, err := GetIntArg("limit", limit, limitDefault)
 		if err != nil {
-			RespondWithError(w, 403, err.Error(), fmt.Sprintf("can not parse limit=`%s` to an integer", limit))
+			RespondWithError(w, 400, err.Error(), fmt.Sprintf("can not parse limit=`%s` to an integer", limit))
 			return
 		}
 
 		pageValue, err := GetIntArg("page", page, pageDefault)
 		if err != nil {
-			RespondWithError(w, 403, err.Error(), fmt.Sprintf("can not parse page=`%s` to an integer", page))
+			RespondWithError(w, 400, err.Error(), fmt.Sprintf("can not parse page=`%s` to an integer", page))
 			return
 		}
 
 		sizeValue, err := GetIntArg("size", size, sizeDefault)
 		if err != nil {
-			RespondWithError(w, 403, err.Error(), fmt.Sprintf("can not parse size=`%s` to an integer", size))
+			RespondWithError(w, 400, err.Error(), fmt.Sprintf("can not parse size=`%s` to an integer", size))
 			return
 		}
 

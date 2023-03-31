@@ -22,12 +22,7 @@ func (c Controller) Routes() func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Post("/", c.UploadTweet)
 		r.With(PaginationMiddleware).Get("/", c.HandlePaginateTweets)
-	}
-}
-
-func (c Controller) RetrieveTweet() func(r chi.Router) {
-	return func(r chi.Router) {
-		r.Get("/", c.GetTweet)
+		r.Get("/bychecksum/{checksum}", c.GetTweet)
 	}
 }
 
