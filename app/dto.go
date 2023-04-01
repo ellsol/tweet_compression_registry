@@ -3,9 +3,8 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-
 	"github.com/go-chi/chi/v5"
+	"net/http"
 )
 
 // swagger:model UploadTweetDTO
@@ -23,9 +22,22 @@ type UploadTweetResponseDTO struct {
 	Checksum string `json:"checksum"`
 }
 
+// swagger:model GetTweetResponseDTO
 type GetTweetResponseDTO struct {
 	Id            string `json:"id"`
 	Tweet_Content string `json:"tweet"`
+}
+
+type PaginationDTO struct {
+	Page   int `json:"page"`
+	Limit  int `json:"limit"`
+	Offset int `json:"offset"`
+	Size   int `json:"size"`
+}
+
+type PaginatedTweetsResponseDTO struct {
+	Tweets     []GetTweetResponseDTO `json:"tweets"`
+	Pagination PaginationDTO         `json:"pagination"`
 }
 
 func (a *UploadTweetDTO) ReadAndValidate(r *http.Request) error {
@@ -42,7 +54,7 @@ func (a *GetTweetDTO) ReadAndValidate(r *http.Request) error {
 	checksum_val := chi.URLParam(r, "checksum")
 
 	if checksum_val == "" {
-		return fmt.Errorf("body is empty")
+		return fmt.Errorf("no checksum provided")
 	}
 
 	a.Checksum = checksum_val

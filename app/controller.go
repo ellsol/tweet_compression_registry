@@ -18,15 +18,11 @@ func NewController(service *ChecksumService) Controller {
 	}
 }
 
-func (c Controller) InsertTweet() func(r chi.Router) {
+func (c Controller) Routes() func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Post("/", c.UploadTweet)
-	}
-}
-
-func (c Controller) RetrieveTweet() func(r chi.Router) {
-	return func(r chi.Router) {
-		r.Get("/{checksum}", c.GetTweet)
+		r.With(PaginationMiddleware).Get("/", c.HandlePaginateTweets)
+		r.Get("/bychecksum/{checksum}", c.GetTweet)
 	}
 }
 
@@ -53,6 +49,19 @@ func (c Controller) UploadTweet(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		RespondWithJSON(w, InternalError(err.Error()))
+		return
+	}
+
+	RespondWithJSON(w, OK(result))
+}
+
+func (c Controller) HandlePaginateTweets(w http.ResponseWriter, r *http.Request) {
+	paginatioDTO := r.Context().Value(PaginationKey).(*PaginationDTO)
+
+	result, err := c.checksumService.GetPaginatedTweets(r.Context(), paginatioDTO)
+
+	if err != nil {
+		RespondWithJSON(w, NotFound(err.Error()))
 		return
 	}
 

@@ -2,3 +2,4 @@
 .local.env
 tmp
 migrate
+*sql
